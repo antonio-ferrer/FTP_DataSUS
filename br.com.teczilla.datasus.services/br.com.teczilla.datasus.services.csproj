@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\br.com.teczilla.lib.dbf\br.com.teczilla.lib.dbf.csproj" />
+    <ProjectReference Include="..\br.com.teczilla.lib.ftp\br.com.teczilla.lib.ftp.csproj" />
+    <ProjectReference Include="..\br.com.teczilla.lib.util\br.com.teczilla.lib.util.csproj" />
+  </ItemGroup>
+
+</Project>
