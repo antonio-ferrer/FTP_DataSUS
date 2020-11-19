@@ -9,7 +9,7 @@ Embora toda a ação ocorra pelo frontend em windows forms, modularizamos as fun
 Para a execução da ferramenta, recomenda-se o uso do Windows 10 e/ou equivalente com a biblioteca/runtime (framework 4.8) devidamente instalado.
 
 
-Disponibilizamos um build da ferramenta no endereço: https://download.cloudatcost.com/download/xhrpmi90zt8p2qg83x7msbikb
+Disponibilizamos um build da ferramenta no endereço: https://kutt.it/ftpdatasus
 
 Após descompactar o aplicativo, execute o programa [br.com.teczilla.datasus.exe]
 
