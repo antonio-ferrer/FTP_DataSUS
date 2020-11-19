@@ -12,7 +12,8 @@ namespace br.com.teczilla.lib.dbf
     {
         private OleDbConnection _conn;
         private Regex _rxIsNumber;
-
+        private readonly List<Exception> _errors;
+        public IEnumerable<Exception> Errors { get => _errors; }
         public string DirectoryPath { get; }
         public DBVersion Version { get; }
 
@@ -23,6 +24,7 @@ namespace br.com.teczilla.lib.dbf
             var strConn = $@"Provider=Microsoft.Jet.OLEDB.4.0;Data Source={directoryPath};Extended Properties=dBASE {GetDbVersion()};";
             this._conn = new OleDbConnection(strConn);
             _rxIsNumber = new Regex(@"^\d+((\.|,)\d+)?$");
+            _errors = new List<Exception>();
         }
 
         private string GetDbVersion()
@@ -48,16 +50,24 @@ namespace br.com.teczilla.lib.dbf
 
         public DataTable GetTable(string fileName)
         {
-            DataTable table = new DataTable();
-            UseCommand(cmd =>
+            try
             {
-                cmd.CommandText = $"SELECT * FROM {Path.Combine(DirectoryPath, fileName)}";
-                table.Load(cmd.ExecuteReader());
-            });
-            return table;
+                DataTable table = new DataTable();
+                UseCommand(cmd =>
+                {
+                    cmd.CommandText = $"SELECT * FROM {Path.Combine(DirectoryPath, fileName)}";
+                    table.Load(cmd.ExecuteReader());
+                });
+                return table;
+            }
+            catch(Exception ex)
+            {
+                _errors.Add(ex);
+                return null;
+            }
         }
 
-        public DataTable GetTable(string fileName, string whereConditions)
+        /*public DataTable GetTable(string fileName, string whereConditions)
         {
             DataTable table = new DataTable();
             UseCommand(cmd =>
@@ -66,11 +76,11 @@ namespace br.com.teczilla.lib.dbf
                 table.Load(cmd.ExecuteReader());
             });
             return table;
-        }
+        }*/
 
         public string ToXML(string fileName)
         {
-            DataTable table = GetTable(fileName);
+            DataTable table = GetTable(fileName) ?? new DataTable();
             table.TableName = Regex.Replace(fileName, @"\.dbf$", "", RegexOptions.IgnoreCase);
             fileName = Path.Combine(DirectoryPath, table.TableName + ".xml");
             if (File.Exists(fileName))
@@ -108,63 +118,68 @@ namespace br.com.teczilla.lib.dbf
 
         public string ToCSV(string fileName)
         {
-            DataTable table = GetTable(fileName);
+            DataTable table = GetTable(fileName) ?? new DataTable();
             table.TableName = Regex.Replace(fileName, @"\.dbf$", "", RegexOptions.IgnoreCase);
             fileName = Path.Combine(DirectoryPath, table.TableName + ".csv");
             if (File.Exists(fileName))
                 File.Delete(fileName);
-            using (var sw = new StreamWriter(fileName))
+            if (table.Rows.Count > 0)
             {
-                StringBuilder sb = new StringBuilder();
-                foreach (DataColumn col in table.Columns)
+                using (var sw = new StreamWriter(fileName))
                 {
-                    sb.Append(col.ColumnName).Append(';');
-                }
-                sb.Length--;
-                sw.WriteLine(sb.ToString());
-                sb.Clear();
-                foreach (DataRow row in table.Rows)
-                {
+                    StringBuilder sb = new StringBuilder();
                     foreach (DataColumn col in table.Columns)
                     {
-                        sb.Append(GetStringValue(row[col])).Append(';');
+                        sb.Append(col.ColumnName).Append(';');
                     }
                     sb.Length--;
                     sw.WriteLine(sb.ToString());
                     sb.Clear();
-                }
+                    foreach (DataRow row in table.Rows)
+                    {
+                        foreach (DataColumn col in table.Columns)
+                        {
+                            sb.Append(GetStringValue(row[col])).Append(';');
+                        }
+                        sb.Length--;
+                        sw.WriteLine(sb.ToString());
+                        sb.Clear();
+                    }
 
+                }
             }
             return fileName;
         }
 
         public string ToJSON(string fileName)
         {
-            DataTable table = GetTable(fileName);
+            DataTable table = GetTable(fileName) ?? new DataTable();
             table.TableName = Regex.Replace(fileName, @"\.dbf$", "", RegexOptions.IgnoreCase);
             fileName = Path.Combine(DirectoryPath, table.TableName + ".json");
             if (File.Exists(fileName))
                 File.Delete(fileName);
-
-            StringBuilder sb = new StringBuilder();
-            sb.AppendLine("[");
-            foreach (DataRow row in table.Rows)
+            if (table.Rows.Count > 0)
             {
-                sb.AppendLine("{");
-                foreach (DataColumn col in table.Columns)
+                StringBuilder sb = new StringBuilder();
+                sb.AppendLine("[");
+                foreach (DataRow row in table.Rows)
                 {
-                    sb.Append(col.ColumnName.ToLower());
-                    sb.Append(':');
-                    sb.AppendLine(GetJSONValue(row[col]));
+                    sb.AppendLine("{");
+                    foreach (DataColumn col in table.Columns)
+                    {
+                        sb.Append(col.ColumnName.ToLower());
+                        sb.Append(':');
+                        sb.AppendLine(GetJSONValue(row[col]));
+                        sb.Append(',');
+                    }
+                    sb.Length--;
+                    sb.AppendLine("}");
                     sb.Append(',');
                 }
                 sb.Length--;
-                sb.AppendLine("}");
-                sb.Append(',');
+                sb.AppendLine("]");
+                File.WriteAllText(fileName, sb.ToString());
             }
-            sb.Length--;
-            sb.AppendLine("]");
-            File.WriteAllText(fileName, sb.ToString());
             return fileName;
         }
 

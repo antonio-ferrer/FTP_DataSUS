@@ -31,6 +31,9 @@ namespace br.com.teczilla.datasus.view.controls
 
         private void FillData()
         {
+            //lsbMonth.Items.Clear();
+            lsbUF.Items.Clear();
+            cboPrefix.Items.Clear();
             if (_repositoryFilter == null)
                 return;
             int minYear = _repositoryFilter.MinYear ?? 1990;
@@ -49,6 +52,11 @@ namespace br.com.teczilla.datasus.view.controls
             {
                 chkMonth.Enabled = false;
                 lsbMonth.Enabled = false;
+            }
+            else
+            {
+                chkMonth.Enabled = true;
+                lsbMonth.Enabled = true;
             }
         }
 

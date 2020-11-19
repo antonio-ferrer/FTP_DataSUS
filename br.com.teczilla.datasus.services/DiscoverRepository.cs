@@ -1,4 +1,5 @@
 ﻿using br.com.teczilla.lib;
+using br.com.teczilla.lib.dbf;
 using br.com.teczilla.lib.ftp;
 using System;
 using System.Collections.Generic;
@@ -78,6 +79,19 @@ namespace br.com.teczilla.datasus.services
                 return _instances.FirstOrDefault().Value;
             }
             return null;
+        }
+
+        public void ExportFiles2DBF(IEnumerable<IFTPFile> filesToDownload, Action<IEnumerable<FileInfo>> callBack, string directoryTarget = null)
+        {
+            var disc = this;
+            var rep = CurrentRepository;
+            var convert = string.IsNullOrEmpty(directoryTarget) ? new DBConvert() : new DBConvert(directoryTarget);
+            var download = disc.DownloadCache(rep.Name, DiscoveredRepositoryCache.Files, filesToDownload);
+            var dbcs = disc.CopyCacheTo(download, convert.DirectoryTarget);
+            if (convert.ConvertDBC2DBF(dbcs.ToArray(), out IEnumerable<FileInfo> dbfs, deleteDBC: true))
+            {
+                callBack?.Invoke(dbfs?.ToArray());
+            }
         }
 
         private string GetCachePath()

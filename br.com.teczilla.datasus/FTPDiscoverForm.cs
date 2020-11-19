@@ -17,26 +17,25 @@ using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
 using br.com.teczilla.lib.dbf;
+using System.Configuration;
 
 namespace br.com.teczilla.datasus
 {
     public partial class FTPDiscoverForm : Form
     {
-        
         public FTPDiscoverForm()
         {
             InitializeComponent();
             this.Load += FTPDiscoverForm_Load;
-
         }
 
         private void FTPDiscoverForm_Load(object sender, EventArgs e)
         {
             dgFTP.AutoGenerateColumns = false;
-            //tabControl.TabPages.Remove(tabWebFTP);
+            tbxFTPURL.Text = ConfigurationManager.AppSettings["ftp-discover-root"];
         }
 
-        private void btnLoad_Click(object sender, EventArgs e)
+        private void DiscoverRepositories()
         {
             tabExplorer.Text = "Explorar";
             DiscoverRepository.CurrentRepository = null;
@@ -47,12 +46,16 @@ namespace br.com.teczilla.datasus
                 var repositories = dr.Load(!chkUseCache.Checked);
                 var rep = repositories.FirstOrDefault();
                 XElement xml = XElement.Parse(rep.ToXML());
-                this.ThreadSafeExec(()=> { 
+                this.ThreadSafeExec(() => {
                     dgFTP.DataSource = repositories.Select(r => new { Name = r.Name, FilesCount = r.Files?.Count(), FTPLink = r.URL }).ToArray();
                     chkUseCache.Checked = true;
                 });
             });
-           
+        }
+
+        private void btnLoad_Click(object sender, EventArgs e)
+        {
+            DiscoverRepositories();
         }
 
         private void dgFTP_CellClick(object sender, DataGridViewCellEventArgs e)
@@ -64,6 +67,7 @@ namespace br.com.teczilla.datasus
             DiscoverRepository.CurrentRepository = rep;
             tabExplorer.Text = rep.Name;
             tabControl.SelectedTab = tabExplorer;
+            dgFTP.ClearSelection();
         }
 
         private void LoadHome()
@@ -81,13 +85,10 @@ namespace br.com.teczilla.datasus
                 return;
             }
 
-          
-
             switch (tabControl.SelectedIndex)
             {
                 case 1:
                     {
-                       
                         FillRepository();
                         FillMiscellaneous();
                     }
@@ -131,7 +132,6 @@ namespace br.com.teczilla.datasus
                             
                     }
                     break;
-               
             }
         }
 
@@ -157,10 +157,7 @@ namespace br.com.teczilla.datasus
             else
                 dgMiscellaneous.DataSource = data;
 
-            Thread.Sleep(200);
-            Application.DoEvents();
             AutoResizeGrid(dgMiscellaneous);
-            
         }
 
         private void AutoResizeGrid(DataGridView dg)
@@ -183,7 +180,7 @@ namespace br.com.teczilla.datasus
                 string path = "";
                 FormProgress.Run(() =>
                 {
-                    path = disc.Download(rep.Name, DiscoveredRepositoryCache.Miscellaneous, new IFTPFile[] { item })?.FirstOrDefault()?.LocalPath;
+                    path = disc.DownloadCache(rep.Name, DiscoveredRepositoryCache.Miscellaneous, new IFTPFile[] { item })?.FirstOrDefault()?.LocalPath;
                 },
                 (ex) =>
                 {
@@ -191,7 +188,6 @@ namespace br.com.teczilla.datasus
                     else MessageBox.Show("Ocorreu a seguinte falha:\r\n" + ex, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 });
             }
-
         }
 
         private void fileFilter_OnSearch(FileFilterParameters obj)
@@ -218,32 +214,28 @@ namespace br.com.teczilla.datasus
                 MessageBox.Show("Selecione ao menos um arquivo para fazer download!", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
-
-
             var filesToDownload = GetSelectedFiles();
             var disc = DiscoverRepository.GetInstance();
             var rep = DiscoverRepository.CurrentRepository;
             FormProgress.Run(() => {
-                disc.Download(rep.Name, DiscoveredRepositoryCache.Files, filesToDownload);
+                disc.DownloadCache(rep.Name, DiscoveredRepositoryCache.Files, filesToDownload);
             },(ex)=> {
                 if (ex == null)
                     MessageBox.Show("Arquivos baixados com sucesso", "Download", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 else
                     MessageBox.Show("Ocorreu a sequinte excessão:\r\n" + ex, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                
             });
             dgFiles.ClearSelection();
-            
         }
 
-        private IEnumerable<IFTPFile> GetSelectedFiles()
+        private IEnumerable<IFTPFile> GetSelectedFiles(string extension = null)
         {
             List<IFTPFile> selection = new List<IFTPFile>();
             var rep = DiscoverRepository.CurrentRepository;
             var allFiles = rep.Files;
             foreach (DataGridViewRow row in dgFiles.SelectedRows)
                 selection.Add(allFiles.First(f => f.URL.ToLower() == row.Cells[3].Value.ToString().ToLower()));
-            return selection;
+            return selection?.Where(f=>extension == null || f.Name.ToLower().EndsWith(extension.ToLower()))?.ToArray();
         }
 
         private void btnShowDirectory_Click(object sender, EventArgs e)
@@ -262,28 +254,30 @@ namespace br.com.teczilla.datasus
             var disc = DiscoverRepository.GetInstance();
             var rep = DiscoverRepository.CurrentRepository;
             FormProgress.Run(() => {
-                
-                var download = disc.Download(rep.Name, DiscoveredRepositoryCache.Files, filesToDownload);
-                disc.CopyTo(download, folderBrowserDialog1.SelectedPath);
+                var download = disc.DownloadCache(rep.Name, DiscoveredRepositoryCache.Files, filesToDownload);
+                disc.CopyCacheTo(download, folderBrowserDialog1.SelectedPath);
             }, (ex) => {
                 if (ex == null)
+                {
                     MessageBox.Show("Arquivos copiados com sucesso", "Download", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    Process.Start(folderBrowserDialog1.SelectedPath);
+                }
                 else
                     MessageBox.Show("Ocorreu a sequinte excessão:\r\n" + ex, "Erro", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
             });
             dgFiles.ClearSelection();
         }
-
+        /*
         private void ExportDBF(Action<IEnumerable<FileInfo>> callBack)
         {
             var filesToDownload = GetSelectedFiles();
             var disc = DiscoverRepository.GetInstance();
             var rep = DiscoverRepository.CurrentRepository;
             var convert = new DBConvert(folderBrowserDialog1.SelectedPath);
-            var download = disc.Download(rep.Name, DiscoveredRepositoryCache.Files, filesToDownload);
-            var localFiles = disc.CopyTo(download, folderBrowserDialog1.SelectedPath);
-            convert.DBC2DBF(localFiles.ToArray());
+            var download = disc.DownloadCache(rep.Name, DiscoveredRepositoryCache.Files, filesToDownload);
+            var localFiles = disc.CopyCacheTo(download, folderBrowserDialog1.SelectedPath);
+            convert.ConvertDBC2DBF(localFiles.ToArray());
             foreach (var lf in localFiles)
                 lf.Delete();
             callBack?.Invoke( localFiles.Select(f => new FileInfo(f.FullName.ToLower().TrimEnd('c') + "f"))?.ToArray());
@@ -299,22 +293,22 @@ namespace br.com.teczilla.datasus
             if (!Directory.Exists(wk))
                 Directory.CreateDirectory(wk);
             var convert = new DBConvert(wk);
-            var download = disc.Download(rep.Name, DiscoveredRepositoryCache.Files, filesToDownload);
-            var localFiles = disc.CopyTo(download, wk);
-            convert.DBC2DBF(localFiles.ToArray());
+            var download = disc.DownloadCache(rep.Name, DiscoveredRepositoryCache.Files, filesToDownload);
+            var localFiles = disc.CopyCacheTo(download, wk);
+            convert.ConvertDBC2DBF(localFiles.ToArray());
             foreach (var lf in localFiles)
                 lf.Delete();
             callBack?.Invoke(localFiles.Select(f => new FileInfo(f.FullName.ToLower().TrimEnd('c') + "f"))?.ToArray());
             //return convert;
-        }
+        }*/
 
         private void btnExport_Click(object sender, EventArgs e)
         {
             folderBrowserDialog1.SelectedPath = @"C:\";
-            var selected = GetSelectedFiles();
+            var selected = GetSelectedFiles("dbc");
             if ((selected?.Count() ?? 0) == 0)
             {
-                MessageBox.Show("Selecione ao menos um arquivo!", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Selecione ao menos um arquivo compatível (.dbc)!", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
             var files = GetSelectedFiles().Where(f => f.Name.ToLower().EndsWith("dbc"));
@@ -322,6 +316,7 @@ namespace br.com.teczilla.datasus
             {
                 MessageBox.Show("Apenas arquivos no formato DBC podem ser exportados para outros formatos\r\nOutras extensões serão ignoradas no processo", 
                     "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                return;
             }
             string type = "";
             FormExport.OpenDialog((format) => {
@@ -331,19 +326,24 @@ namespace br.com.teczilla.datasus
                 return;
             if (folderBrowserDialog1.ShowDialog() != DialogResult.OK)
                 return;
-            var workingFolder = folderBrowserDialog1.SelectedPath;
+            var workingFolder = DBConvert.GetWorkingDirectory();
             var filesToDownload = GetSelectedFiles();
             var disc = DiscoverRepository.GetInstance();
             var rep = DiscoverRepository.CurrentRepository;
             type = Regex.Match(type, @"\w+", RegexOptions.IgnoreCase).Value.ToUpper();
 
             IEnumerable<FileInfo> dbfs = null;
-            Action callbackExport = () => ExportDBF(d => dbfs = d);
+
+            Action callbackExport = () =>
+            {
+                disc.ExportFiles2DBF(filesToDownload, (d) => dbfs = d, workingFolder);
+            };
             var tableManager = new DBFReader(workingFolder, DBVersion.Default);
             bool tdbf = false;
             switch (type)
             {
                 case "DBF":
+                    tdbf = true;
                     callbackExport += () => {
                         tdbf = true;
                     };
@@ -397,11 +397,23 @@ namespace br.com.teczilla.datasus
                     }
                 };
             }
-
+            else
+            {
+                callbackExport += () =>
+                {
+                    if (dbfs?.Any() != true)
+                        return;
+                    foreach (var dbf in dbfs)
+                    {
+                        dbf.MoveTo(Path.Combine(folderBrowserDialog1.SelectedPath, dbf.Name));
+                    }
+                };
+            }
             callbackExport += () =>
             {
+                tableManager.Dispose();
                 //MessageBox.Show("Arquivos exportados com sucesso", "Conversão", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                Process.Start("explorer", workingFolder);
+                Process.Start("explorer", folderBrowserDialog1.SelectedPath);
             };
             
 
@@ -413,9 +425,6 @@ namespace br.com.teczilla.datasus
                     return;
                 }
             });
-
-            
-           
         }
 
         private void ShowError(Exception ex)
@@ -426,13 +435,19 @@ namespace br.com.teczilla.datasus
 
         private void btnQuery_Click(object sender, EventArgs e)
         {
+            var files = GetSelectedFiles("dbc");
+            if(files == null || !files.Any())
+            {
+                MessageBox.Show("Selecione ao menos um arquivo compatível (.dbc)", "Atenção", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             IEnumerable<FileInfo> dbfs = null;
             FormProgress.Run(() =>
             {
-                ExportLocalDBF((f) => dbfs = f);
+                DiscoverRepository.GetInstance().ExportFiles2DBF(files, f=>dbfs=f);
             }, ShowError);
 
-            if(dbfs.Any() == true)
+            if(dbfs?.Any() == true)
             {
                 var wk = dbfs.First().Directory.FullName;
                 FormViewTable.ShowTables(wk, dbfs.Select(f => f.Name).ToArray());
@@ -445,6 +460,11 @@ namespace br.com.teczilla.datasus
                 return;
             //https://github.com/antonio-ferrer
             Process.Start(@"https://github.com/" + dgMembers[2, e.RowIndex].Value.ToString());
+        }
+
+        private void FTPDiscoverForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            DBConvert.PurgeWorkingDirectory();
         }
     }
 }

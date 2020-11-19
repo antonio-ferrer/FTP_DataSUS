@@ -82,7 +82,7 @@ namespace br.com.teczilla.datasus.services
             File.WriteAllText(cachePath, xmlCache.ToString());
         }
 
-        public static IEnumerable<CachedFile> Download(this DiscoverRepository rep, string repositoryName, DiscoveredRepositoryCache target, IEnumerable<IFTPFile> files)
+        public static IEnumerable<CachedFile> DownloadCache(this DiscoverRepository rep, string repositoryName, DiscoveredRepositoryCache target, IEnumerable<IFTPFile> files)
         {
             var wk = rep.GetRepositoryWorkingFolder(repositoryName, target);
             var outDatedFiles = GetOutDatedFiles(rep, repositoryName, files);
@@ -98,7 +98,7 @@ namespace br.com.teczilla.datasus.services
             return cachedFiles;
         }
 
-        public static IEnumerable<FileInfo> CopyTo(this DiscoverRepository rep, IEnumerable<CachedFile> cachedFiles, string directory)
+        public static IEnumerable<FileInfo> CopyCacheTo(this DiscoverRepository rep, IEnumerable<CachedFile> cachedFiles, string directory)
         {
             List<FileInfo> files = new List<FileInfo>();
             if (!Directory.Exists(directory))

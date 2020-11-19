@@ -1,4 +1,5 @@
 ﻿using br.com.teczilla.datasus.view.controls;
+using br.com.teczilla.lib;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -45,8 +46,8 @@ namespace br.com.teczilla.datasus
             {
                 foreach(var table in Tables)
                 {
-                    var content = tableManager.GetTable(table);
-                    
+                    var content = tableManager.GetTable(table) ?? new DataTable();
+                    if (content.Rows.Count  == 0) continue;
                     var tab = new TabPage(table);
                     DataGridView grid = new DataGridView { AutoGenerateColumns = true };
                     tab.Controls.Add(grid);
@@ -54,6 +55,15 @@ namespace br.com.teczilla.datasus
                     grid.DataSource = content;
                     AddTab(tab);
                 }
+            }
+            if(tabControl1.TabPages.Count == 0)
+            {
+                MessageBox.Show("Não foi possível ler os arquivos!\r\nPode ser que estejam corrompidos ou estão num formato não suportado pelo nosso leitor",
+                    "Atenção",
+                    MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning
+                    );
+                Util.ThreadSafeExec(this, this.Close);
             }
         }
 

@@ -325,11 +325,12 @@
             this.btnShowDirectory.TabIndex = 5;
             this.btnShowDirectory.Text = "Ver diretório";
             this.btnShowDirectory.UseVisualStyleBackColor = true;
+            this.btnShowDirectory.Visible = false;
             this.btnShowDirectory.Click += new System.EventHandler(this.btnShowDirectory_Click);
             // 
             // btnCopyTo
             // 
-            this.btnCopyTo.Location = new System.Drawing.Point(249, 23);
+            this.btnCopyTo.Location = new System.Drawing.Point(6, 23);
             this.btnCopyTo.Name = "btnCopyTo";
             this.btnCopyTo.Size = new System.Drawing.Size(75, 23);
             this.btnCopyTo.TabIndex = 4;
@@ -339,7 +340,7 @@
             // 
             // btnExport
             // 
-            this.btnExport.Location = new System.Drawing.Point(168, 23);
+            this.btnExport.Location = new System.Drawing.Point(87, 23);
             this.btnExport.Name = "btnExport";
             this.btnExport.Size = new System.Drawing.Size(75, 23);
             this.btnExport.TabIndex = 3;
@@ -349,7 +350,7 @@
             // 
             // btnQuery
             // 
-            this.btnQuery.Location = new System.Drawing.Point(87, 23);
+            this.btnQuery.Location = new System.Drawing.Point(168, 23);
             this.btnQuery.Name = "btnQuery";
             this.btnQuery.Size = new System.Drawing.Size(75, 23);
             this.btnQuery.TabIndex = 2;
@@ -359,12 +360,13 @@
             // 
             // btnDownload
             // 
-            this.btnDownload.Location = new System.Drawing.Point(6, 23);
+            this.btnDownload.Location = new System.Drawing.Point(411, 23);
             this.btnDownload.Name = "btnDownload";
             this.btnDownload.Size = new System.Drawing.Size(75, 23);
             this.btnDownload.TabIndex = 1;
             this.btnDownload.Text = "Download";
             this.btnDownload.UseVisualStyleBackColor = true;
+            this.btnDownload.Visible = false;
             this.btnDownload.Click += new System.EventHandler(this.btnDownload_Click);
             // 
             // dgFiles
@@ -525,6 +527,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FTPDataSUS - Discover [Grupo +Vida] - (FIAP/Sanofi Challenge) * USO COMERCIAL PRO" +
     "BIDO *";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FTPDiscoverForm_FormClosing);
             this.tabControl.ResumeLayout(false);
             this.tabHome.ResumeLayout(false);
             this.tabHome.PerformLayout();
