@@ -28,24 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle5 = new System.Windows.Forms.DataGridViewCellStyle();
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle6 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FTPDiscoverForm));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabHome = new System.Windows.Forms.TabPage();
             this.chkUseCache = new System.Windows.Forms.CheckBox();
             this.grpRepositories = new System.Windows.Forms.GroupBox();
-            this.tabControlRepositories = new System.Windows.Forms.TabControl();
-            this.tabRepo = new System.Windows.Forms.TabPage();
-            this.dgFTP = new System.Windows.Forms.DataGridView();
-            this.colFTPLink = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colNome = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colFiles = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.colEdit = new System.Windows.Forms.DataGridViewButtonColumn();
             this.btnLoad = new System.Windows.Forms.Button();
             this.tbxFTPURL = new System.Windows.Forms.TextBox();
             this.lblRootLink = new System.Windows.Forms.Label();
@@ -60,7 +53,6 @@
             this.btnDownload = new System.Windows.Forms.Button();
             this.dgFiles = new System.Windows.Forms.DataGridView();
             this.grpFiltros = new System.Windows.Forms.GroupBox();
-            this.fileFilter = new br.com.teczilla.datasus.view.controls.FileFilter();
             this.tabMiscellaneous = new System.Windows.Forms.TabPage();
             this.dgMiscellaneous = new System.Windows.Forms.DataGridView();
             this.colMiscName = new System.Windows.Forms.DataGridViewButtonColumn();
@@ -70,12 +62,15 @@
             this.tabPageMembers = new System.Windows.Forms.TabPage();
             this.dgMembers = new System.Windows.Forms.DataGridView();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
+            this.dgFTP = new System.Windows.Forms.DataGridView();
+            this.colFTPLink = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colNome = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colFiles = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.colEdit = new System.Windows.Forms.DataGridViewButtonColumn();
+            this.fileFilter = new br.com.teczilla.datasus.view.controls.FileFilter();
             this.tabControl.SuspendLayout();
             this.tabHome.SuspendLayout();
             this.grpRepositories.SuspendLayout();
-            this.tabControlRepositories.SuspendLayout();
-            this.tabRepo.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.dgFTP)).BeginInit();
             this.tabExplorer.SuspendLayout();
             this.tabControlExplorer.SuspendLayout();
             this.tabFiles.SuspendLayout();
@@ -86,6 +81,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgMiscellaneous)).BeginInit();
             this.tabPageMembers.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgMembers)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgFTP)).BeginInit();
             this.SuspendLayout();
             // 
             // tabControl
@@ -99,7 +95,7 @@
             this.tabControl.Location = new System.Drawing.Point(0, 0);
             this.tabControl.Name = "tabControl";
             this.tabControl.SelectedIndex = 0;
-            this.tabControl.Size = new System.Drawing.Size(855, 551);
+            this.tabControl.Size = new System.Drawing.Size(855, 527);
             this.tabControl.TabIndex = 0;
             this.tabControl.SelectedIndexChanged += new System.EventHandler(this.tabControl_SelectedIndexChanged);
             // 
@@ -113,7 +109,7 @@
             this.tabHome.Location = new System.Drawing.Point(4, 22);
             this.tabHome.Name = "tabHome";
             this.tabHome.Padding = new System.Windows.Forms.Padding(3);
-            this.tabHome.Size = new System.Drawing.Size(847, 525);
+            this.tabHome.Size = new System.Drawing.Size(847, 501);
             this.tabHome.TabIndex = 0;
             this.tabHome.Text = "Home";
             this.tabHome.UseVisualStyleBackColor = true;
@@ -135,108 +131,12 @@
             this.grpRepositories.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.grpRepositories.Controls.Add(this.tabControlRepositories);
-            this.grpRepositories.Location = new System.Drawing.Point(8, 43);
+            this.grpRepositories.Controls.Add(this.dgFTP);
+            this.grpRepositories.Location = new System.Drawing.Point(8, 58);
             this.grpRepositories.Name = "grpRepositories";
-            this.grpRepositories.Size = new System.Drawing.Size(833, 474);
+            this.grpRepositories.Size = new System.Drawing.Size(833, 437);
             this.grpRepositories.TabIndex = 3;
             this.grpRepositories.TabStop = false;
-            // 
-            // tabControlRepositories
-            // 
-            this.tabControlRepositories.Controls.Add(this.tabRepo);
-            this.tabControlRepositories.Location = new System.Drawing.Point(6, 19);
-            this.tabControlRepositories.Name = "tabControlRepositories";
-            this.tabControlRepositories.SelectedIndex = 0;
-            this.tabControlRepositories.Size = new System.Drawing.Size(821, 449);
-            this.tabControlRepositories.TabIndex = 1;
-            // 
-            // tabRepo
-            // 
-            this.tabRepo.Controls.Add(this.dgFTP);
-            this.tabRepo.Location = new System.Drawing.Point(4, 22);
-            this.tabRepo.Name = "tabRepo";
-            this.tabRepo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabRepo.Size = new System.Drawing.Size(813, 423);
-            this.tabRepo.TabIndex = 0;
-            this.tabRepo.Text = "Repositórios";
-            this.tabRepo.UseVisualStyleBackColor = true;
-            // 
-            // dgFTP
-            // 
-            this.dgFTP.AllowUserToAddRows = false;
-            this.dgFTP.AllowUserToDeleteRows = false;
-            this.dgFTP.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgFTP.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            this.dgFTP.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgFTP.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-            this.colFTPLink,
-            this.colNome,
-            this.colFiles,
-            this.colEdit});
-            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
-            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
-            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
-            this.dgFTP.DefaultCellStyle = dataGridViewCellStyle2;
-            this.dgFTP.Location = new System.Drawing.Point(6, 6);
-            this.dgFTP.Name = "dgFTP";
-            this.dgFTP.ReadOnly = true;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgFTP.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
-            this.dgFTP.Size = new System.Drawing.Size(801, 411);
-            this.dgFTP.TabIndex = 0;
-            this.dgFTP.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgFTP_CellClick);
-            // 
-            // colFTPLink
-            // 
-            this.colFTPLink.DataPropertyName = "FTPLink";
-            this.colFTPLink.HeaderText = "";
-            this.colFTPLink.Name = "colFTPLink";
-            this.colFTPLink.ReadOnly = true;
-            this.colFTPLink.Visible = false;
-            // 
-            // colNome
-            // 
-            this.colNome.DataPropertyName = "Name";
-            this.colNome.HeaderText = "Nome";
-            this.colNome.Name = "colNome";
-            this.colNome.ReadOnly = true;
-            this.colNome.Width = 250;
-            // 
-            // colFiles
-            // 
-            this.colFiles.DataPropertyName = "FilesCount";
-            this.colFiles.HeaderText = "Arquivos";
-            this.colFiles.Name = "colFiles";
-            this.colFiles.ReadOnly = true;
-            // 
-            // colEdit
-            // 
-            this.colEdit.HeaderText = "";
-            this.colEdit.Name = "colEdit";
-            this.colEdit.ReadOnly = true;
-            this.colEdit.Resizable = System.Windows.Forms.DataGridViewTriState.True;
-            this.colEdit.Text = "Explorar";
-            this.colEdit.UseColumnTextForButtonValue = true;
             // 
             // btnLoad
             // 
@@ -271,7 +171,7 @@
             this.tabExplorer.Location = new System.Drawing.Point(4, 22);
             this.tabExplorer.Name = "tabExplorer";
             this.tabExplorer.Padding = new System.Windows.Forms.Padding(3);
-            this.tabExplorer.Size = new System.Drawing.Size(847, 525);
+            this.tabExplorer.Size = new System.Drawing.Size(847, 501);
             this.tabExplorer.TabIndex = 1;
             this.tabExplorer.Text = "Explorar";
             this.tabExplorer.UseVisualStyleBackColor = true;
@@ -284,7 +184,7 @@
             this.tabControlExplorer.Location = new System.Drawing.Point(3, 3);
             this.tabControlExplorer.Name = "tabControlExplorer";
             this.tabControlExplorer.SelectedIndex = 0;
-            this.tabControlExplorer.Size = new System.Drawing.Size(841, 519);
+            this.tabControlExplorer.Size = new System.Drawing.Size(841, 495);
             this.tabControlExplorer.TabIndex = 0;
             // 
             // tabFiles
@@ -294,7 +194,7 @@
             this.tabFiles.Location = new System.Drawing.Point(4, 22);
             this.tabFiles.Name = "tabFiles";
             this.tabFiles.Padding = new System.Windows.Forms.Padding(3);
-            this.tabFiles.Size = new System.Drawing.Size(833, 493);
+            this.tabFiles.Size = new System.Drawing.Size(833, 469);
             this.tabFiles.TabIndex = 0;
             this.tabFiles.Text = "Repositório";
             this.tabFiles.UseVisualStyleBackColor = true;
@@ -312,7 +212,7 @@
             this.grpFiles.Controls.Add(this.dgFiles);
             this.grpFiles.Location = new System.Drawing.Point(6, 251);
             this.grpFiles.Name = "grpFiles";
-            this.grpFiles.Size = new System.Drawing.Size(821, 241);
+            this.grpFiles.Size = new System.Drawing.Size(821, 217);
             this.grpFiles.TabIndex = 1;
             this.grpFiles.TabStop = false;
             this.grpFiles.Text = "Arquivos";
@@ -382,7 +282,7 @@
             this.dgFiles.Name = "dgFiles";
             this.dgFiles.ReadOnly = true;
             this.dgFiles.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgFiles.Size = new System.Drawing.Size(815, 177);
+            this.dgFiles.Size = new System.Drawing.Size(815, 153);
             this.dgFiles.TabIndex = 0;
             // 
             // grpFiltros
@@ -397,25 +297,13 @@
             this.grpFiltros.TabStop = false;
             this.grpFiltros.Text = "Filtros";
             // 
-            // fileFilter
-            // 
-            this.fileFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.fileFilter.CausesValidation = false;
-            this.fileFilter.Count = 0;
-            this.fileFilter.Location = new System.Drawing.Point(6, 19);
-            this.fileFilter.Name = "fileFilter";
-            this.fileFilter.Size = new System.Drawing.Size(809, 212);
-            this.fileFilter.TabIndex = 0;
-            this.fileFilter.OnSearch += new System.Action<br.com.teczilla.datasus.view.controls.FileFilterParameters>(this.fileFilter_OnSearch);
-            // 
             // tabMiscellaneous
             // 
             this.tabMiscellaneous.Controls.Add(this.dgMiscellaneous);
             this.tabMiscellaneous.Location = new System.Drawing.Point(4, 22);
             this.tabMiscellaneous.Name = "tabMiscellaneous";
             this.tabMiscellaneous.Padding = new System.Windows.Forms.Padding(3);
-            this.tabMiscellaneous.Size = new System.Drawing.Size(833, 493);
+            this.tabMiscellaneous.Size = new System.Drawing.Size(833, 469);
             this.tabMiscellaneous.TabIndex = 1;
             this.tabMiscellaneous.Text = "Complementos";
             this.tabMiscellaneous.UseVisualStyleBackColor = true;
@@ -458,7 +346,7 @@
             dataGridViewCellStyle6.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
             dataGridViewCellStyle6.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
             this.dgMiscellaneous.RowHeadersDefaultCellStyle = dataGridViewCellStyle6;
-            this.dgMiscellaneous.Size = new System.Drawing.Size(827, 487);
+            this.dgMiscellaneous.Size = new System.Drawing.Size(827, 463);
             this.dgMiscellaneous.TabIndex = 0;
             this.dgMiscellaneous.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgMiscellaneous_CellClick);
             // 
@@ -498,7 +386,7 @@
             this.tabPageMembers.Location = new System.Drawing.Point(4, 22);
             this.tabPageMembers.Name = "tabPageMembers";
             this.tabPageMembers.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageMembers.Size = new System.Drawing.Size(847, 525);
+            this.tabPageMembers.Size = new System.Drawing.Size(847, 501);
             this.tabPageMembers.TabIndex = 2;
             this.tabPageMembers.Text = "Grupo +Vida";
             this.tabPageMembers.UseVisualStyleBackColor = true;
@@ -512,15 +400,103 @@
             this.dgMembers.Location = new System.Drawing.Point(3, 3);
             this.dgMembers.Name = "dgMembers";
             this.dgMembers.ReadOnly = true;
-            this.dgMembers.Size = new System.Drawing.Size(841, 519);
+            this.dgMembers.Size = new System.Drawing.Size(841, 495);
             this.dgMembers.TabIndex = 0;
             this.dgMembers.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgMembers_CellContentClick);
+            // 
+            // dgFTP
+            // 
+            this.dgFTP.AllowUserToAddRows = false;
+            this.dgFTP.AllowUserToDeleteRows = false;
+            this.dgFTP.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgFTP.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            this.dgFTP.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgFTP.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colFTPLink,
+            this.colNome,
+            this.colFiles,
+            this.colEdit});
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Window;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.ControlText;
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
+            this.dgFTP.DefaultCellStyle = dataGridViewCellStyle2;
+            this.dgFTP.Location = new System.Drawing.Point(6, 19);
+            this.dgFTP.Name = "dgFTP";
+            this.dgFTP.ReadOnly = true;
+            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleLeft;
+            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle3.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgFTP.RowHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            this.dgFTP.Size = new System.Drawing.Size(821, 412);
+            this.dgFTP.TabIndex = 1;
+            this.dgFTP.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgFTP_CellClick);
+            // 
+            // colFTPLink
+            // 
+            this.colFTPLink.DataPropertyName = "FTPLink";
+            this.colFTPLink.HeaderText = "";
+            this.colFTPLink.Name = "colFTPLink";
+            this.colFTPLink.ReadOnly = true;
+            this.colFTPLink.Visible = false;
+            // 
+            // colNome
+            // 
+            this.colNome.DataPropertyName = "Name";
+            this.colNome.HeaderText = "Nome";
+            this.colNome.Name = "colNome";
+            this.colNome.ReadOnly = true;
+            this.colNome.Width = 250;
+            // 
+            // colFiles
+            // 
+            this.colFiles.DataPropertyName = "FilesCount";
+            this.colFiles.HeaderText = "Arquivos";
+            this.colFiles.Name = "colFiles";
+            this.colFiles.ReadOnly = true;
+            // 
+            // colEdit
+            // 
+            this.colEdit.HeaderText = "";
+            this.colEdit.Name = "colEdit";
+            this.colEdit.ReadOnly = true;
+            this.colEdit.Resizable = System.Windows.Forms.DataGridViewTriState.True;
+            this.colEdit.Text = "Explorar";
+            this.colEdit.UseColumnTextForButtonValue = true;
+            // 
+            // fileFilter
+            // 
+            this.fileFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.fileFilter.CausesValidation = false;
+            this.fileFilter.Count = 0;
+            this.fileFilter.Location = new System.Drawing.Point(6, 19);
+            this.fileFilter.Name = "fileFilter";
+            this.fileFilter.Size = new System.Drawing.Size(809, 212);
+            this.fileFilter.TabIndex = 0;
+            this.fileFilter.OnSearch += new System.Action<br.com.teczilla.datasus.view.controls.FileFilterParameters>(this.fileFilter_OnSearch);
             // 
             // FTPDiscoverForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(855, 551);
+            this.ClientSize = new System.Drawing.Size(855, 539);
             this.Controls.Add(this.tabControl);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FTPDiscoverForm";
@@ -532,9 +508,6 @@
             this.tabHome.ResumeLayout(false);
             this.tabHome.PerformLayout();
             this.grpRepositories.ResumeLayout(false);
-            this.tabControlRepositories.ResumeLayout(false);
-            this.tabRepo.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.dgFTP)).EndInit();
             this.tabExplorer.ResumeLayout(false);
             this.tabControlExplorer.ResumeLayout(false);
             this.tabFiles.ResumeLayout(false);
@@ -545,6 +518,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.dgMiscellaneous)).EndInit();
             this.tabPageMembers.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgMembers)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dgFTP)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -554,18 +528,11 @@
         private System.Windows.Forms.TabControl tabControl;
         private System.Windows.Forms.TabPage tabHome;
         private System.Windows.Forms.GroupBox grpRepositories;
-        private System.Windows.Forms.DataGridView dgFTP;
         private System.Windows.Forms.Button btnLoad;
         private System.Windows.Forms.TextBox tbxFTPURL;
         private System.Windows.Forms.Label lblRootLink;
         private System.Windows.Forms.CheckBox chkUseCache;
         private System.Windows.Forms.TabPage tabExplorer;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colFTPLink;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colNome;
-        private System.Windows.Forms.DataGridViewTextBoxColumn colFiles;
-        private System.Windows.Forms.DataGridViewButtonColumn colEdit;
-        private System.Windows.Forms.TabControl tabControlRepositories;
-        private System.Windows.Forms.TabPage tabRepo;
         private System.Windows.Forms.TabControl tabControlExplorer;
         private System.Windows.Forms.TabPage tabFiles;
         private System.Windows.Forms.TabPage tabMiscellaneous;
@@ -586,5 +553,10 @@
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog1;
         private System.Windows.Forms.TabPage tabPageMembers;
         private System.Windows.Forms.DataGridView dgMembers;
+        private System.Windows.Forms.DataGridView dgFTP;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colFTPLink;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colNome;
+        private System.Windows.Forms.DataGridViewTextBoxColumn colFiles;
+        private System.Windows.Forms.DataGridViewButtonColumn colEdit;
     }
 }

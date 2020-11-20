@@ -3,6 +3,7 @@ using br.com.teczilla.lib.dbf;
 using br.com.teczilla.lib.ftp;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -61,7 +62,7 @@ namespace br.com.teczilla.datasus.services
             FTP = ftpLink;
             MinFilesCount = minFiles;
             _Errors = new List<Exception>();
-          
+
         }
 
         public static DiscoverRepository GetInstance(string ftpLink = null)
@@ -166,8 +167,13 @@ namespace br.com.teczilla.datasus.services
             if (!renewCache && _data.ContainsKey(key))
                 return CurrentRepositories = _data[key];
 
+            //<add key="ftp-file-cache-time" value="26"/><!-- horas -->
+            int timeCache;
+            if (!int.TryParse(ConfigurationManager.AppSettings["ftp-file-cache-time"], out timeCache))
+                timeCache = 6;
+
             //file cache
-            if (!renewCache && ReadCache(TimeSpan.FromHours(3), out IEnumerable<DiscoveredRepository> repositories))
+            if (!renewCache && ReadCache(TimeSpan.FromHours(timeCache), out IEnumerable<DiscoveredRepository> repositories))
             {
                 _data.Add(key, repositories.ToArray());
                 return CurrentRepositories = repositories;
@@ -176,11 +182,14 @@ namespace br.com.teczilla.datasus.services
             //get from ftp 
             List<DiscoveredRepository> list = new List<DiscoveredRepository>();
             var directories = _ftp.Load(FTP).GetDirectories();
+
+            var ignore = ConfigurationManager.AppSettings["ignore"].Split('|');
+            directories = directories.Where(d => !ignore.Contains(d.Name, StringComparer.OrdinalIgnoreCase));
             foreach (var dir in directories)
             {
 
                 List<FlatFile> misc = new List<FlatFile>();
-                var dr = CheckRepository(dir.Name, dir, ref misc);
+                var dr = CheckRepository(dir.Name, dir, ref misc, null);
                 if (dr != null)
                 {
                     dr.Miscellaneous = misc;
@@ -234,35 +243,42 @@ namespace br.com.teczilla.datasus.services
         }
 
 
-        private DiscoveredRepository CheckRepository(string name, FTPDirectory dir, ref List<FlatFile> miscellaneous)
+        private DiscoveredRepository CheckRepository(string name, FTPDirectory dir, ref List<FlatFile> miscellaneous, DiscoveredRepository dr)
         {
-            DiscoveredRepository dr = null;
+            //dr = null;
             var rawFiles = _ftp.Load(dir.URL)?.GetFiles();
             var files = rawFiles?.Where(f => checkFile(f));
             if (files?.Count() >= MinFilesCount)
             {
-                dr = new DiscoveredRepository();
-                dr.Files = files.ToArray();
+                dr = dr ?? new DiscoveredRepository();
+                List<IFTPFile> ffiles = new List<IFTPFile>();
+                if (dr.Files?.Any() == true)
+                {
+                    ffiles.AddRange(dr.Files);
+                }
+                ffiles.AddRange(files);
+                dr.Files = ffiles.ToArray();
                 dr.URL = dir.URL;
                 dr.Name = name;
-                return dr;
+                //return dr;
             }
-            else
+
+            var miscFiles = rawFiles?.Where(f => checkMiscellaneousFile(f));
+            if (miscFiles?.Count() > 0)
+                FillMiscellaneousFiles(name, miscFiles, ref miscellaneous);
+            var directories = _ftp.Load(dir)?.GetDirectories();
+            if (directories?.Any() == true)
             {
-                var miscFiles = rawFiles?.Where(f => checkMiscellaneousFile(f));
-                if (miscFiles?.Count() > 0)
-                    FillMiscellaneousFiles(name, miscFiles, ref miscellaneous);
-                var directories = _ftp.Load(dir)?.GetDirectories();
-                if (directories?.Any() == true)
+                foreach (var subDir in directories)
                 {
-                    foreach (var subDir in directories)
-                    {
-                        dr = CheckRepository(name, subDir, ref miscellaneous);
-                        if (dr != null)
-                            break;
-                    }
+                    dr = CheckRepository(name, subDir, ref miscellaneous, dr);
+                    /*if (dr != null)
+                        break;*/
+                    
                 }
+                //return dr;
             }
+
             return dr;
         }
 
